@@ -47,6 +47,7 @@ local defaults = {
 	minimum = 10,
 	pauseInCombat = false,
 	showModel = true,
+	minimapAngle = 3.8,
 }
 unitscan.defaults = defaults
 

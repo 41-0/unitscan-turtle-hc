@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.3.6
+
+- Set the minimap button radius to 78 UI units and shifted the icon left by 2 UI units.
+
+## 1.3.5
+
+- Matched the minimap button radius to HCDeaths (80 UI units).
+
+## 1.3.4
+
+- Aligned the minimap button with the rim and added a saved drag position.
+
 ## 1.3.3
 
 - Added slash commands to enable, disable, or toggle scanning with chat confirmation.

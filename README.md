@@ -14,6 +14,7 @@ Keep one copy of the addon installed. Upgrading in the same folder keeps your sa
 | --- | --- |
 | Minimap button, left-click | Toggle the settings window |
 | Minimap button, right-click | Toggle scanning globally. The icon dims when scanning is disabled |
+| Minimap button, left-drag | Move it around the minimap rim and save its position |
 | Alert plate, left-click | Target the displayed unit |
 | Alert plate, Ctrl + left-drag | Move the alert stack |
 | Ignore This Mob | Dismiss the alert and add the name to the ignored list |

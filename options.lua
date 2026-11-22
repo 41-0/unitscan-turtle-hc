@@ -1,5 +1,6 @@
 local unitscan = UnitscanTurtleHC
 local PAGE_SIZE = 7
+local MINIMAP_RADIUS = 78
 local scan_checkbox
 local minimap_button
 local minimap_icon
@@ -261,7 +262,31 @@ local function show_minimap_tooltip()
 	end
 	GameTooltip:AddLine('Left-click to toggle settings', 1, 1, 1)
 	GameTooltip:AddLine('Right-click to toggle scanning', 1, 1, 1)
+	GameTooltip:AddLine('Left-drag to move around the minimap', 1, 1, 1)
 	GameTooltip:Show()
+end
+
+local function position_minimap_button()
+	local angle = unitscan_settings.minimapAngle
+	local x = math.cos(angle) * MINIMAP_RADIUS
+	local y = math.sin(angle) * MINIMAP_RADIUS
+	minimap_button:ClearAllPoints()
+	minimap_button:SetPoint('CENTER', Minimap, 'CENTER', x, y)
+end
+
+local function drag_minimap_button()
+	local center_x, center_y = Minimap:GetCenter()
+	if not center_x or not center_y then return end
+	local cursor_x, cursor_y = GetCursorPosition()
+	local scale = Minimap:GetEffectiveScale()
+	local x = cursor_x / scale - center_x
+	local y = cursor_y / scale - center_y
+	local length = math.sqrt(x * x + y * y)
+	if length == 0 then return end
+
+	local angle = math.acos(math.min(1, math.max(-1, x / length)))
+	unitscan_settings.minimapAngle = y < 0 and -angle or angle
+	position_minimap_button()
 end
 
 function unitscan.create_minimap_button()
@@ -271,32 +296,49 @@ function unitscan.create_minimap_button()
 	minimap_button = widget
 	widget:SetWidth(31)
 	widget:SetHeight(31)
-	widget:SetPoint('CENTER', Minimap, 'BOTTOMLEFT', 17, 17)
+	position_minimap_button()
 	widget:SetFrameStrata('MEDIUM')
 	widget:SetFrameLevel(Minimap:GetFrameLevel() + 5)
 	widget:SetHighlightTexture([[Interface\Minimap\UI-Minimap-ZoomButton-Highlight]], 'ADD')
 	widget:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
+	widget:RegisterForDrag('LeftButton')
 
 	minimap_icon = widget:CreateTexture(nil, 'ARTWORK')
 	minimap_icon:SetWidth(19)
 	minimap_icon:SetHeight(19)
-	minimap_icon:SetPoint('CENTER', widget, 'CENTER', 0, 0)
+	minimap_icon:SetPoint('CENTER', widget, 'CENTER', -2, 0)
 	minimap_icon:SetTexture([[Interface\Icons\Ability_Hunter_SniperShot]])
 	minimap_icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
 	local border = widget:CreateTexture(nil, 'OVERLAY')
 	border:SetWidth(53)
 	border:SetHeight(53)
-	border:SetPoint('TOPLEFT', widget, 'TOPLEFT', 0, 0)
+	border:SetPoint('TOPLEFT', widget, 'TOPLEFT', -2, 0)
 	border:SetTexture([[Interface\Minimap\MiniMap-TrackingBorder]])
 
+	local dragged
+	widget:SetScript('OnMouseDown', function()
+		if arg1 == 'LeftButton' then dragged = nil end
+	end)
+	widget:SetScript('OnDragStart', function()
+		dragged = true
+		GameTooltip:Hide()
+		widget:SetScript('OnUpdate', drag_minimap_button)
+	end)
+	widget:SetScript('OnDragStop', function()
+		drag_minimap_button()
+		widget:SetScript('OnUpdate', nil)
+	end)
+	widget:SetScript('OnHide', function()
+		widget:SetScript('OnUpdate', nil)
+	end)
 	widget:SetScript('OnEnter', show_minimap_tooltip)
 	widget:SetScript('OnLeave', function() GameTooltip:Hide() end)
 	widget:SetScript('OnClick', function()
 		if arg1 == 'RightButton' then
 			unitscan.set_scan_enabled(not unitscan_settings.enabled)
 			show_minimap_tooltip()
-		elseif arg1 == 'LeftButton' then
+		elseif arg1 == 'LeftButton' and not dragged then
 			unitscan.toggle_options()
 		end
 	end)
