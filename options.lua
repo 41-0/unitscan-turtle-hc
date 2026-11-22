@@ -68,7 +68,10 @@ end
 local function create_options()
 	local panel = CreateFrame('Frame', 'UnitscanTurtleHCOptions', UIParent)
 	panel:Hide()
-	panel:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+	panel:SetPoint('CENTER', UIParent, 'CENTER',
+		tonumber(unitscan_settings.optionsX) or 0, tonumber(unitscan_settings.optionsY) or 0)
+	panel:SetMovable(true)
+	panel:SetClampedToScreen(true)
 	panel:SetWidth(420)
 	panel:SetHeight(394)
 	panel:SetFrameStrata('DIALOG')
@@ -228,6 +231,36 @@ local function create_options()
 		ignored:Show()
 		refresh()
 	end)
+
+	local title_bar = CreateFrame('Frame', nil, panel)
+	title_bar:SetPoint('TOPLEFT', panel, 'TOPLEFT', 14, -12)
+	title_bar:SetPoint('TOPRIGHT', panel, 'TOPRIGHT', -42, -12)
+	title_bar:SetHeight(36)
+	title_bar:EnableMouse(true)
+	title_bar:RegisterForDrag('LeftButton')
+
+	local moving
+	local function save_position()
+		if not moving then return end
+		moving = nil
+		panel:StopMovingOrSizing()
+		local x, y = panel:GetCenter()
+		local parent_x, parent_y = UIParent:GetCenter()
+		if not x or not y or not parent_x or not parent_y then return end
+
+		unitscan_settings.optionsX = x - parent_x
+		unitscan_settings.optionsY = y - parent_y
+		panel:ClearAllPoints()
+		panel:SetPoint('CENTER', UIParent, 'CENTER',
+			unitscan_settings.optionsX, unitscan_settings.optionsY)
+	end
+
+	title_bar:SetScript('OnDragStart', function()
+		moving = true
+		panel:StartMoving()
+	end)
+	title_bar:SetScript('OnDragStop', save_position)
+	panel:SetScript('OnHide', save_position)
 
 	panel:SetScript('OnShow', function()
 		ignored:Hide()

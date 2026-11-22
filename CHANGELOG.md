@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.7
+
+- Made the settings window draggable by its title and saved its position.
+
 ## 1.3.6
 
 - Set the minimap button radius to 78 UI units and shifted the icon left by 2 UI units.
