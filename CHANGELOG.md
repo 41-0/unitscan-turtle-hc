@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.2
+
+- Added a saved toggle for warning sound playback.
+
 ## 1.3.1
 
 - Removed the three bundled warning sounds. The default uses the game client’s RaidWarning sound.

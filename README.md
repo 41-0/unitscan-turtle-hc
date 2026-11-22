@@ -30,6 +30,7 @@ Keep one copy of the addon installed. Upgrading in the same folder keeps your sa
 | Pause scanning during combat or auto-attack | Off |
 | Show character model | On, for the newest visible alert |
 | Screen flash | On |
+| Play warning sound | On |
 | Warning sound | `Sound\Interface\RaidWarning.wav` |
 | Alert scale | 1.0 |
 | Minimum display time | 10 seconds |

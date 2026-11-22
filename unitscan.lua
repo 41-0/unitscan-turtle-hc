@@ -43,6 +43,7 @@ local defaults = {
 	sound = [[Sound\Interface\RaidWarning.wav]],
 	scale = 1,
 	flash = true,
+	playSound = true,
 	minimum = 10,
 	pauseInCombat = false,
 	showModel = true,
@@ -117,6 +118,7 @@ do
 	local last_played
 	
 	function unitscan.play_sound()
+		if not unitscan_settings.playSound then return end
 		if not last_played or GetTime() - last_played > 10 then
 			PlaySoundFile(unitscan_settings.sound)
 			last_played = GetTime()
