@@ -13,7 +13,7 @@ local function update_scan_controls()
 	end
 end
 
-local function set_scan_enabled(enabled)
+function unitscan.set_scan_enabled(enabled)
 	unitscan_settings.enabled = enabled
 	if not enabled then
 		unitscan.clear_alerts()
@@ -87,7 +87,7 @@ local function create_options()
 	label(settings, 'UnitScan Turtle-HC', 22, -22, 'GameFontNormalLarge')
 
 	scan_checkbox = checkbox(settings, 'Enable scanning', -52, function()
-		set_scan_enabled(this:GetChecked() and true or false)
+		unitscan.set_scan_enabled(this:GetChecked() and true or false)
 	end)
 	local pause = checkbox(settings, 'Pause scanning during combat or auto-attack', -76, function()
 		unitscan_settings.pauseInCombat = this:GetChecked() and true or false
@@ -294,7 +294,7 @@ function unitscan.create_minimap_button()
 	widget:SetScript('OnLeave', function() GameTooltip:Hide() end)
 	widget:SetScript('OnClick', function()
 		if arg1 == 'RightButton' then
-			set_scan_enabled(not unitscan_settings.enabled)
+			unitscan.set_scan_enabled(not unitscan_settings.enabled)
 			show_minimap_tooltip()
 		elseif arg1 == 'LeftButton' then
 			unitscan.toggle_options()

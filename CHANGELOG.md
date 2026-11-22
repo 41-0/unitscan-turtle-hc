@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.3
+
+- Added slash commands to enable, disable, or toggle scanning with chat confirmation.
+
 ## 1.3.2
 
 - Added a saved toggle for warning sound playback.

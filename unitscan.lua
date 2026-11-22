@@ -570,9 +570,16 @@ end
 	
 SLASH_UNITSCAN1 = '/unitscan'
 function SlashCmdList.UNITSCAN(parameter)
-	local _, _, name = strfind(parameter, '^%s*(.-)%s*$')
+	local name = unitscan.trim(parameter)
+	local command = strlower(name)
 	
-	if strlower(name) == 'options' then
+	if command == 'on' or command == 'off' or command == 'toggle' then
+		local enabled = command == 'on' or (command == 'toggle' and not unitscan_settings.enabled)
+		unitscan.set_scan_enabled(enabled)
+		if DEFAULT_CHAT_FRAME then
+			DEFAULT_CHAT_FRAME:AddMessage('Unitscan: Scanning is now ' .. (enabled and 'ON' or 'OFF'))
+		end
+	elseif command == 'options' then
 		unitscan.toggle_options()
 	elseif name == '' then
 		unitscan.print("Added targets:")
