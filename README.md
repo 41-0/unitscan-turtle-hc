@@ -24,7 +24,10 @@ Keep one copy of the addon installed. Upgrading in the same folder keeps your sa
 | `/unitscan on`, `/unitscan off`, `/unitscan toggle` | Set or toggle global scanning and report the resulting state in chat |
 | `/unitscan` | List custom and zone targets |
 | `/unitscan name` | Add or remove a custom scan target |
+| `/unitscan add` | Register the selected target in your current zone |
 | `/unitscantarget` | Target the most recently detected unit if its name is eligible |
+
+Use **Add Mob** in settings to enter a mob and zone name manually. The zone field starts with your current zone. Custom zone entries are saved across sessions and scanned only in their registered zone. Use the zone name as displayed in game.
 
 ## Settings
 

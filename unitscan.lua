@@ -138,8 +138,48 @@ do
 	end
 end
 
+local function include_zone_mob(name)
+	for existing in pairs(unitscan_zonetargets) do
+		if strupper(existing) == strupper(name) then return end
+	end
+	unitscan_zonetargets[name] = true
+end
+
 function unitscan.load_zonetargets()
 	unitscan_zone_targets()
+	local zone = GetZoneText()
+	if not zone or not unitscan_settings or not unitscan_settings.zoneMobs then return end
+
+	local names = unitscan_settings.zoneMobs[strupper(unitscan.trim(zone))]
+	if names then
+		for _, name in pairs(names) do include_zone_mob(name) end
+	end
+end
+
+function unitscan.add_zone_mob(name, zone)
+	name = unitscan.trim(name or '')
+	zone = unitscan.trim(zone or '')
+	if name == '' or zone == '' then
+		return false, 'Enter both a mob name and a zone name.'
+	end
+
+	local zone_key = strupper(zone)
+	local name_key = strupper(name)
+	local names = unitscan_settings.zoneMobs[zone_key]
+	if not names then
+		names = {}
+		unitscan_settings.zoneMobs[zone_key] = names
+	end
+	if names[name_key] then
+		return false, names[name_key] .. ' is already registered for ' .. zone .. '.'
+	end
+
+	names[name_key] = name
+	if strupper(unitscan.trim(GetZoneText() or '')) == zone_key then
+		unitscan_zonetargets = unitscan_zonetargets or {}
+		include_zone_mob(name)
+	end
+	return true, 'Added ' .. name .. ' to ' .. zone .. '.'
 end
 
 do 
@@ -257,6 +297,7 @@ function unitscan.LOAD()
 		end
 	end
 	if type(unitscan_settings.ignored) ~= 'table' then unitscan_settings.ignored = {} end
+	if type(unitscan_settings.zoneMobs) ~= 'table' then unitscan_settings.zoneMobs = {} end
 	do
 		local flash = CreateFrame'Frame'
 		unitscan.flash = flash
@@ -601,6 +642,14 @@ function SlashCmdList.UNITSCAN(parameter)
 		if DEFAULT_CHAT_FRAME then
 			DEFAULT_CHAT_FRAME:AddMessage('Unitscan: Scanning is now ' .. (enabled and 'ON' or 'OFF'))
 		end
+	elseif command == 'add' then
+		local target = UnitName('target')
+		if not target then
+			unitscan.print('Select a target before using /unitscan add.')
+			return
+		end
+		local _, message = unitscan.add_zone_mob(target, GetZoneText())
+		unitscan.print(message)
 	elseif command == 'options' then
 		unitscan.toggle_options()
 	elseif name == '' then

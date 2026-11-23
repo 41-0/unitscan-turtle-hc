@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.1
+
+- Added /unitscan add usage instructions to the Add Mob screen.
+
+## 1.4.0
+
+- Added persistent zone-specific mobs through Add Mob and /unitscan add.
+
 ## 1.3.9
 
 - Shortened the alert button label to Snooze.
