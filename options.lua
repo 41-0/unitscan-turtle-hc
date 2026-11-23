@@ -73,7 +73,7 @@ local function create_options()
 	panel:SetMovable(true)
 	panel:SetClampedToScreen(true)
 	panel:SetWidth(420)
-	panel:SetHeight(426)
+	panel:SetHeight(456)
 	panel:SetFrameStrata('DIALOG')
 	panel:EnableMouse(true)
 	panel:SetBackdrop({
@@ -93,9 +93,12 @@ local function create_options()
 	scan_checkbox = checkbox(settings, 'Enable scanning', -52, function()
 		unitscan.set_scan_enabled(this:GetChecked() and true or false)
 	end)
-	local pause = checkbox(settings, 'Pause scanning during combat or auto-attack', -76, function()
-		unitscan_settings.pauseInCombat = this:GetChecked() and true or false
-	end)
+	local attack_warning = label(settings,
+		'Scanning pauses during Auto Shot, wand Shoot, and melee Auto Attack.',
+		22, -81, 'GameFontHighlightSmall')
+	attack_warning:SetWidth(376)
+	attack_warning:SetJustifyH('LEFT')
+	attack_warning:SetTextColor(1, 0.82, 0.25)
 	local model = checkbox(settings, 'Show character model', -100, function()
 		unitscan_settings.showModel = this:GetChecked() and true or false
 		if not unitscan_settings.showModel then unitscan.hide_model() end
@@ -292,6 +295,10 @@ local function create_options()
 		add_mob:Show()
 	end)
 
+	local combat_pause = checkbox(settings, 'Pause scanning throughout combat', -414, function()
+		unitscan_settings.pauseThroughoutCombat = this:GetChecked() and true or false
+	end)
+
 	local title_bar = CreateFrame('Frame', nil, panel)
 	title_bar:SetPoint('TOPLEFT', panel, 'TOPLEFT', 14, -12)
 	title_bar:SetPoint('TOPRIGHT', panel, 'TOPRIGHT', -42, -12)
@@ -327,9 +334,9 @@ local function create_options()
 		add_mob:Hide()
 		settings:Show()
 		update_scan_controls()
+		combat_pause:SetChecked(unitscan_settings.pauseThroughoutCombat and 1 or 0)
 		flash:SetChecked(unitscan_settings.flash and 1 or 0)
 		play_sound:SetChecked(unitscan_settings.playSound and 1 or 0)
-		pause:SetChecked(unitscan_settings.pauseInCombat and 1 or 0)
 		model:SetChecked(unitscan_settings.showModel and 1 or 0)
 		sound:SetText(unitscan_settings.sound)
 		scale:SetText(tostring(unitscan_settings.scale))

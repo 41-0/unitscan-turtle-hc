@@ -34,7 +34,7 @@ Use **Add Mob** in settings to enter a mob and zone name manually. The zone fiel
 | Setting | Default |
 | --- | --- |
 | Enable scanning | On |
-| Pause scanning during combat or auto-attack | Off |
+| Pause scanning throughout combat | Off |
 | Show character model | On, for the newest visible alert |
 | Screen flash | On |
 | Play warning sound | On |
@@ -54,7 +54,7 @@ Open **Ignored Mobs** to add or remove exact names. Name matching is case-insens
 
 ## Compatibility
 
-The scanner briefly selects units with `TargetByName` and then restores the user's target. Other addons can react to these brief target changes. If target changes interfere with combat, enable **Pause scanning during combat or auto-attack**.
+The scanner briefly selects units with `TargetByName` and then restores the user's target. Other addons can react to these brief target changes. **Scanning pauses automatically during Auto Shot, wand Shoot, and melee Auto Attack.** Enable **Pause scanning throughout combat** to also suppress scans for the entire time your character is in combat. Scanning resumes when the pause conditions clear if scanning is enabled.
 
 ## Credits and licensing
 

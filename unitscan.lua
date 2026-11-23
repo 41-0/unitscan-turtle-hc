@@ -5,10 +5,6 @@ unitscan:SetScript('OnEvent', function()
 		unitscan.LOAD()
 		unitscan.loaded = true
 		unitscan.create_minimap_button()
-	elseif event == "PLAYER_REGEN_DISABLED" then
-		unitscan.incombat = true
-	elseif event == "PLAYER_REGEN_ENABLED" then
-		unitscan.incombat = nil
 	elseif event == "PLAYER_ENTER_COMBAT" then
 		unitscan.melee = true
 	elseif event == "PLAYER_LEAVE_COMBAT" then
@@ -25,8 +21,6 @@ end)
 unitscan:RegisterEvent'VARIABLES_LOADED'
 unitscan:RegisterEvent'MINIMAP_ZONE_CHANGED'
 unitscan:RegisterEvent'PLAYER_ENTERING_WORLD'
-unitscan:RegisterEvent'PLAYER_REGEN_DISABLED' -- in combat
-unitscan:RegisterEvent'PLAYER_REGEN_ENABLED' -- out of combat
 unitscan:RegisterEvent'PLAYER_ENTER_COMBAT' -- melee autoattack enabled
 unitscan:RegisterEvent'PLAYER_LEAVE_COMBAT' -- melee autoattack disabled
 unitscan:RegisterEvent'START_AUTOREPEAT_SPELL' -- ranged autoattack enabled
@@ -45,8 +39,8 @@ local defaults = {
 	flash = true,
 	playSound = true,
 	minimum = 10,
+	pauseThroughoutCombat = false,
 	snoozeMinutes = 5,
-	pauseInCombat = false,
 	showModel = true,
 	minimapAngle = 3.8,
 }
@@ -573,7 +567,8 @@ local last_check = GetTime()
 
 function unitscan.UPDATE()
 	if not unitscan.loaded or not unitscan_settings.enabled then return end
-	if unitscan_settings.pauseInCombat and (unitscan.incombat or unitscan.melee or unitscan.ranged) then
+	if unitscan.melee or unitscan.ranged
+		or (unitscan_settings.pauseThroughoutCombat and UnitAffectingCombat("player")) then
 		return
 	end
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.4.4
+
+- Added an opt-in pause for the entire combat period. Auto-attacks always pause scanning.
+
+## 1.4.3
+
+- Removed the combat-wide pause option and documented the mandatory scan pause during auto-attacks.
+
+## 1.4.2
+
+- Always pause scanning during melee auto-attacks and ranged auto-repeat to avoid interrupting attacks.
+
 ## 1.4.1
 
 - Added /unitscan add usage instructions to the Add Mob screen.
