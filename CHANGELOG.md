@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.9
+
+- Shortened the alert button label to Snooze.
+
+## 1.3.8
+
+- Added configurable per-mob alert snoozing and compact alert buttons.
+
 ## 1.3.7
 
 - Made the settings window draggable by its title and saved its position.

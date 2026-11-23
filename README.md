@@ -18,7 +18,8 @@ Keep one copy of the addon installed. Upgrading in the same folder keeps your sa
 | Settings or Ignored Mobs title, left-drag | Move the window and save its position |
 | Alert plate, left-click | Target the displayed unit |
 | Alert plate, Ctrl + left-drag | Move the alert stack |
-| Ignore This Mob | Dismiss the alert and add the name to the ignored list |
+| Ignore | Dismiss the alert and add the name to the ignored list |
+| Snooze | Dismiss and suppress alerts for this mob name for the configured duration |
 | `/unitscan options` | Toggle the settings window |
 | `/unitscan on`, `/unitscan off`, `/unitscan toggle` | Set or toggle global scanning and report the resulting state in chat |
 | `/unitscan` | List custom and zone targets |
@@ -37,9 +38,12 @@ Keep one copy of the addon installed. Upgrading in the same folder keeps your sa
 | Warning sound | `Sound\Interface\RaidWarning.wav` |
 | Alert scale | 1.0 |
 | Minimum display time | 10 seconds |
+| Snooze duration | 5 minutes |
 
 Checkboxes apply immediately. Click **Apply** to save edits to the MPQ sound path, scale, or minimum display time. A blank sound field restores the default path.
 The three legacy warning sounds are no longer bundled. If your saved warning sound points to one of those files, clear the field and click **Apply** to restore the game client sound.
+
+Snooze duration can be set from 1 to 999 minutes with **Apply**. Active snoozes last until their timer expires or the UI reloads.
 
 Each plate has its own timer. After its minimum time, the plate disappears when a scan stops finding its unit. While scanning is paused, the addon checks for disappearance when scanning resumes. Turning scanning off clears all alerts immediately.
 

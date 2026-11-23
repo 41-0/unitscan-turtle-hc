@@ -73,7 +73,7 @@ local function create_options()
 	panel:SetMovable(true)
 	panel:SetClampedToScreen(true)
 	panel:SetWidth(420)
-	panel:SetHeight(394)
+	panel:SetHeight(426)
 	panel:SetFrameStrata('DIALOG')
 	panel:EnableMouse(true)
 	panel:SetBackdrop({
@@ -115,7 +115,9 @@ local function create_options()
 	local scale = input(settings, 'UnitscanTurtleHCScale', 262, -225, 110, 12)
 	label(settings, 'Minimum display time (seconds)', 22, -263)
 	local minimum = input(settings, 'UnitscanTurtleHCMinimum', 262, -257, 110, 12)
-	local status = label(settings, '', 22, -325, 'GameFontHighlightSmall')
+	label(settings, 'Snooze duration (minutes)', 22, -295)
+	local snooze = input(settings, 'UnitscanTurtleHCSnooze', 262, -289, 110, 3)
+	local status = label(settings, '', 22, -357, 'GameFontHighlightSmall')
 
 	local function apply()
 		local new_scale = tonumber(scale:GetText())
@@ -128,23 +130,31 @@ local function create_options()
 			status:SetText('Enter a non-negative number of seconds.')
 			return
 		end
+		local minutes = tonumber(snooze:GetText())
+		if not minutes or minutes < 1 or minutes > 999 or math.floor(minutes) ~= minutes then
+			status:SetText('Enter a snooze duration from 1 to 999 minutes.')
+			return
+		end
 		local path = unitscan.trim(sound:GetText())
 		if path == '' then path = unitscan.defaults.sound end
 		unitscan_settings.sound = path
 		unitscan_settings.scale = new_scale
 		unitscan_settings.minimum = new_minimum
+		unitscan_settings.snoozeMinutes = minutes
 		unitscan.anchor:SetScale(new_scale)
 		sound:SetText(path)
 		sound:ClearFocus()
 		scale:ClearFocus()
 		minimum:ClearFocus()
+		snooze:ClearFocus()
 		status:SetText('Settings saved.')
 	end
 
-	button(settings, 'Apply', 22, -291, 85, apply)
+	button(settings, 'Apply', 22, -323, 85, apply)
 	sound:SetScript('OnEnterPressed', apply)
 	scale:SetScript('OnEnterPressed', apply)
 	minimum:SetScript('OnEnterPressed', apply)
+	snooze:SetScript('OnEnterPressed', apply)
 
 	local ignored = CreateFrame('Frame', nil, panel)
 	ignored:SetAllPoints(panel)
@@ -223,10 +233,11 @@ local function create_options()
 		ignored:Hide()
 		settings:Show()
 	end)
-	button(settings, 'Ignored Mobs', 22, -352, 120, function()
+	button(settings, 'Ignored Mobs', 22, -384, 120, function()
 		sound:ClearFocus()
 		scale:ClearFocus()
 		minimum:ClearFocus()
+		snooze:ClearFocus()
 		settings:Hide()
 		ignored:Show()
 		refresh()
@@ -273,6 +284,7 @@ local function create_options()
 		sound:SetText(unitscan_settings.sound)
 		scale:SetText(tostring(unitscan_settings.scale))
 		minimum:SetText(tostring(unitscan_settings.minimum))
+		snooze:SetText(tostring(unitscan_settings.snoozeMinutes))
 		status:SetText('')
 	end)
 	return panel

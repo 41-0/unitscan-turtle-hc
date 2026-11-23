@@ -45,6 +45,7 @@ local defaults = {
 	flash = true,
 	playSound = true,
 	minimum = 10,
+	snoozeMinutes = 5,
 	pauseInCombat = false,
 	showModel = true,
 	minimapAngle = 3.8,
@@ -59,6 +60,7 @@ end
 local alerts = {}
 local alertsByName = {}
 local availablePlates = {}
+local snoozedUntil = {}
 
 function unitscan.layout_alerts()
 	for i, plate in ipairs(alerts) do
@@ -105,14 +107,23 @@ function unitscan.ignore(name)
 	local key = strupper(name)
 	unitscan_settings.ignored[key] = name
 	local plate = alertsByName[key]
-	if plate then
-		if plate.zoneTargets and plate.zoneTargets == unitscan_zonetargets then
-			plate.zoneTargets[plate.zoneName] = true
-		end
-		unitscan.remove_alert(plate)
-		unitscan.layout_alerts()
-		if not alerts[1] then unitscan.stop_flash() end
+	if plate then unitscan.dismiss_alert(plate) end
+end
+
+function unitscan.dismiss_alert(plate)
+	if plate.zoneTargets and plate.zoneTargets == unitscan_zonetargets then
+		plate.zoneTargets[plate.zoneName] = true
 	end
+	unitscan.remove_alert(plate)
+	unitscan.layout_alerts()
+	if not alerts[1] then unitscan.stop_flash() end
+end
+
+function unitscan.snooze_alert(plate)
+	snoozedUntil[plate.key] = GetTime() + unitscan_settings.snoozeMinutes * 60
+	-- Custom targets are consumed on detection. Re-arm this one for when snooze ends.
+	if not plate.zoneTargets then unitscan_targets[plate.key] = true end
+	unitscan.dismiss_alert(plate)
 end
 
 do
@@ -159,7 +170,8 @@ do
 	local function check_list(targets, on_found, is_zone, now)
 		for name in pairs(targets) do
 			local key = strupper(name)
-			if not unitscan_settings.ignored[key] and not alertsByName[key] then
+			if not unitscan_settings.ignored[key] and not alertsByName[key]
+				and not snoozedUntil[key] then
 				if key == unitscan.target(name) then
 					local plate = table.remove(availablePlates) or unitscan.create_plate()
 					plate.key = key
@@ -198,6 +210,9 @@ do
 	end
 
 	function unitscan.check_for_targets(now)
+		for key, expires in pairs(snoozedUntil) do
+			if now >= expires then snoozedUntil[key] = nil end
+		end
 		for i = table.getn(alerts), 1, -1 do
 			local plate = alerts[i]
 			if now - plate.shownAt >= unitscan_settings.minimum then
@@ -428,13 +443,19 @@ function unitscan.create_plate()
 
 	do
 		local ignore = CreateFrame('Button', nil, button, 'UIPanelButtonTemplate')
-		ignore:SetPoint('TOP', button, 'BOTTOM', 0, -3)
-		ignore:SetWidth(140)
+		ignore:SetPoint('TOPRIGHT', button, 'BOTTOM', -11, -1)
+		ignore:SetWidth(60)
 		ignore:SetHeight(22)
-		ignore:SetText('Ignore This Mob')
+		ignore:SetText('Ignore')
 		ignore:SetScript('OnClick', function()
 			unitscan.ignore(button:GetText())
 		end)
+		local snooze = CreateFrame('Button', nil, button, 'UIPanelButtonTemplate')
+		snooze:SetPoint('TOPLEFT', ignore, 'TOPRIGHT', 4, 0)
+		snooze:SetWidth(78)
+		snooze:SetHeight(22)
+		snooze:SetScript('OnClick', function() unitscan.snooze_alert(button) end)
+		snooze:SetText('Snooze')
 	end
 	
 	do
